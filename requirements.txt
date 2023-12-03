@@ -1,5 +1,3 @@
---index-url https://download.pytorch.org/whl/cu118
-
 # python 3.10.0
 torch==2.0.0+cu118
 transformers==4.27.1
