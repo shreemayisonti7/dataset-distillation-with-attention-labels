@@ -4,6 +4,7 @@ import logging
 import os
 from dataclasses import dataclass
 from functools import wraps
+import time
 
 import hydra
 import mlflow
@@ -137,4 +138,6 @@ def main(config: Config):
 
 
 if __name__ == "__main__":
+    start_time = time.time()
     main()
+    print(f'Total time taken for training and fine-tuning is {time.time()-start_time}')
