@@ -27,12 +27,12 @@ model:
 distilled_data:
   pretrained_data_path: null
   data_per_label: 1
-  attention_label_type: none # [none, cls, all]
+  attention_label_type: cls # [none, cls, all]
   attention_loss_lambda: 1.0
   seq_length: 512
-  label_type: hard # [hard, soft, unrestricted]
+  label_type: soft # [hard, soft, unrestricted]
   lr_for_step: True
-  lr_init: 1.0e-2
+  lr_init: 0.01
   lr_linear_decay: False
   fix_order: True
 
@@ -55,7 +55,7 @@ train:
   max_grad_norm: 1.0
   val_interval: 1
   log_interval: -1
-  n_eval_model: 20
+  n_eval_model: 1
   save_ckpt_dir: ${base.save_dir}/checkpoints
   fp16: False
   bf16: False

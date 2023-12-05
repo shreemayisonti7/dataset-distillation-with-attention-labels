@@ -66,21 +66,21 @@ class Trainer:
         )
         scaler = amp.GradScaler(enabled=self.use_amp)
 
-        # evaluate before training
-        results = evaluator.evaluate_fast(
-            distilled_data, valid_loader, n_eval_model=self.config.n_eval_model
-        )
-        mlflow.log_metrics(results, step=0)
-        logger.info(
-            "Validation [{:>{}}/{}]: {}".format(
-                0, len(str(self.config.epoch)), self.config.epoch, results
-            )
-        )
-        best_ckpt_path = os.path.join(self.config.save_ckpt_dir, "best-ckpt")
-        distilled_data.save_pretrained(best_ckpt_path)
-        mlflow.log_artifact(best_ckpt_path)
-
-        best_val_loss = results["loss"]
+        # # evaluate before training
+        # results = evaluator.evaluate_fast(
+        #     distilled_data, valid_loader, n_eval_model=self.config.n_eval_model
+        # )
+        # mlflow.log_metrics(results, step=0)
+        # logger.info(
+        #     "Validation [{:>{}}/{}]: {}".format(
+        #         0, len(str(self.config.epoch)), self.config.epoch, results
+        #     )
+        # )
+        # best_ckpt_path = os.path.join(self.config.save_ckpt_dir, "best-ckpt")
+        # distilled_data.save_pretrained(best_ckpt_path)
+        # mlflow.log_artifact(best_ckpt_path)
+        #
+        # best_val_loss = results["loss"]
 
         logger.info("Start training!!")
         for i in range(self.config.epoch):
@@ -199,34 +199,34 @@ class Trainer:
                         )
                         log_train_loss = 0
 
-            if (i + 1) % self.config.val_interval == 0:
-                results = evaluator.evaluate_fast(
-                    distilled_data, valid_loader, n_eval_model=self.config.n_eval_model
-                )
-                mlflow.log_metrics(results, step=len(train_loader) * (i + 1))
-                logger.info(
-                    "VALIDATION (Epoch[{:>2}/{}]): {}".format(
-                        i + 1, self.config.epoch, results
-                    )
-                )
-
-                if results["loss"] < best_val_loss:
-                    best_val_loss = results["loss"]
-                    distilled_data.save_pretrained(best_ckpt_path)
-                    mlflow.log_artifact(best_ckpt_path)
-                    logger.info(f"Save best checkpoint at `{best_ckpt_path}`")
+            # if (i + 1) % self.config.val_interval == 0:
+            #     results = evaluator.evaluate_fast(
+            #         distilled_data, valid_loader, n_eval_model=self.config.n_eval_model
+            #     )
+            #     mlflow.log_metrics(results, step=len(train_loader) * (i + 1))
+            #     logger.info(
+            #         "VALIDATION (Epoch[{:>2}/{}]): {}".format(
+            #             i + 1, self.config.epoch, results
+            #         )
+            #     )
+            #
+            #     if results["loss"] < best_val_loss:
+            #         best_val_loss = results["loss"]
+            #         distilled_data.save_pretrained(best_ckpt_path)
+            #         mlflow.log_artifact(best_ckpt_path)
+            #         logger.info(f"Save best checkpoint at `{best_ckpt_path}`")
 
         logger.info("Finish training!!")
-
-        # save last checkpoint
-        last_ckpt_path = os.path.join(self.config.save_ckpt_dir, "last-ckpt")
-        distilled_data.save_pretrained(last_ckpt_path)
-        mlflow.log_artifact(last_ckpt_path)
-        logger.info(f"Save last checkpoint at `{last_ckpt_path}`")
-
-        # load best checkpoint
-        best_checkpoint = torch.load(os.path.join(best_ckpt_path, "data_dict"))
-        distilled_data.load_data_dict(best_checkpoint)
+        #
+        # # save last checkpoint
+        # last_ckpt_path = os.path.join(self.config.save_ckpt_dir, "last-ckpt")
+        # distilled_data.save_pretrained(last_ckpt_path)
+        # mlflow.log_artifact(last_ckpt_path)
+        # logger.info(f"Save last checkpoint at `{last_ckpt_path}`")
+        #
+        # # load best checkpoint
+        # best_checkpoint = torch.load(os.path.join(best_ckpt_path, "data_dict"))
+        # distilled_data.load_data_dict(best_checkpoint)
 
     def configure_optimizer(
         self,
