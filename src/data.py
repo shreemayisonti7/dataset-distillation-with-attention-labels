@@ -66,6 +66,13 @@ TASK_ATTRS = {
         "test_split_key": "validation",
         "metric_keys": ('super_glue', 'wic'),
     },
+    "rte": {
+        "load_args": ("glue", "rte"),
+        "sentence_keys": ("sentence1", "sentence2"),
+        "problem_type": "single_label_classification",
+        "test_split_key": "validation",
+        "metric_keys": ("glue", "rte"),
+    },
 }
 
 
