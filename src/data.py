@@ -73,6 +73,14 @@ TASK_ATTRS = {
         "test_split_key": "validation",
         "metric_keys": ("glue", "rte"),
     },
+    "sd": {
+        "load_args": None,
+        "sentence_keys": ("text", ),
+        "problem_type": "single_label_classification",
+        "test_split_key": "validation",
+        "metric_keys": ('super_glue', 'wic'),
+    },
+
 }
 
 
@@ -111,7 +119,7 @@ class DataModule:
         self.datasets: DatasetDict = self.get_dataset()
         logger.info(f"Datasets: {self.datasets}")
 
-        self.num_labels = self.datasets["train"].features["labels"].num_classes
+        self.num_labels = 3 #self.datasets["train"].features["labels"].num_classes
 
         # preprocessed_dataset
         self.preprocessed_datasets = None
@@ -122,31 +130,22 @@ class DataModule:
     def get_dataset(self):
         """load raw datasets from source"""
         if os.path.exists(self.config.datasets_path):
-            datasets = load_from_disk(self.config.datasets_path)
-        else:
-            assert self.config.task_name in TASK_ATTRS
-            datasets = load_dataset(*self.dataset_attr["load_args"])
-
-            if "validation" not in datasets:
-                datasets["validation"] = datasets.pop(
-                    self.dataset_attr["test_split_key"]
-                )
-            assert datasets.keys() >= {"train", "validation"}
-
+            datasets = load_dataset("json", data_files={"train": f"./../data/sd/train.jsonl",
+                "validation": f"./../data/sd/validation.jsonl"})
+            # datasets = load_from_disk(self.config.datasets_path)
+            print("loaded Social Dilemma")
+        # else:
+        #     assert self.config.task_name in TASK_ATTRS
+        #     datasets = load_dataset(*self.dataset_attr["load_args"])
+        #
+        #     if "validation" not in datasets:
+        #         datasets["validation"] = datasets.pop(
+        #             self.dataset_attr["test_split_key"]
+        #         )
             os.makedirs(os.path.dirname(self.config.datasets_path), exist_ok=True)
             datasets.save_to_disk(self.config.datasets_path)
 
-        if (
-            TASK_ATTRS[self.config.task_name]["problem_type"]
-            == "single_label_classification"
-        ):
-            # rename label_key
-            assert "label" in datasets["train"].features
-            datasets = datasets.rename_column("label", "labels")
-        else:
-            raise NotImplementedError
-
-        return datasets
+            return datasets
 
     def run_preprocess(self, tokenizer: PreTrainedTokenizerFast):
         """datasets preprocessing"""
@@ -157,19 +156,19 @@ class DataModule:
                 tokenizer=tokenizer, padding="longest", pad_to_multiple_of=8
             )
 
-        if (
-            os.path.exists(self.config.preprocessed_datasets_path)
-            and not self.config.force_preprocess
-        ):
-            logger.info(
-                "Load preprocessed datasets from `{}`".format(
-                    self.config.preprocessed_datasets_path
-                )
-            )
-            self.preprocessed_datasets = load_from_disk(
-                self.config.preprocessed_datasets_path
-            )
-            return
+        # if (
+        #     os.path.exists(self.config.preprocessed_datasets_path)
+        #     and not self.config.force_preprocess
+        # ):
+        #     logger.info(
+        #         "Load preprocessed datasets from `{}`".format(
+        #             self.config.preprocessed_datasets_path
+        #         )
+        #     )
+        #     self.preprocessed_datasets = load_from_disk(
+        #         self.config.preprocessed_datasets_path
+        #     )
+        #     return
 
         self.preprocessed_datasets = self.preprocess_dataset(
             tokenizer=tokenizer, dataset=self.datasets
@@ -198,13 +197,22 @@ class DataModule:
                 *sentences, max_length=tokenizer.model_max_length, truncation=True
             )
 
+        def label_setter(examples):
+            # print(len(examples))
+            if examples['label'] == 'Negative':
+                return {'labels': torch.Tensor([0])}
+            elif examples['label'] == 'Positive':
+                return {'labels': torch.Tensor([1])}
+            else:
+                return {'labels': torch.Tensor([2])}
+
         # tokenize
         dataset = dataset.map(
             tokenize_fn,
             batched=True,
-            num_proc=self.config.num_proc,
             desc="Tokenize datasets",
         )
+        dataset = dataset.map(label_setter)
 
         remove_keys = [
             col

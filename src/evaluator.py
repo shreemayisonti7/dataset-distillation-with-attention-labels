@@ -63,7 +63,7 @@ class Evaluator:
     def __init__(self, config: EvaluateConfig, model: LearnerModel):
         self.config = config
         self.model = model
-        self.metric = Metric(config.task_name)
+        self.metric = Metric('accuracy')
 
     def evaluate(
         self,

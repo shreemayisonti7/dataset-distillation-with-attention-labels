@@ -9,9 +9,9 @@ base:
   seed: 42
 
 data:
-  task_name: wic
-  datasets_path: ${base.data_dir_root}/${data.task_name}/datasets
-  preprocessed_datasets_path: ${base.data_dir_root}/${data.task_name}/datasets_for_${model.model_name}
+  task_name: sd
+  datasets_path: ${base.data_dir_root}/sd
+  preprocessed_datasets_path: ${base.data_dir_root}/datasets_for_${model.model_name}
   train_batch_size: 32
   valid_batch_size: 256
   test_batch_size: 256
