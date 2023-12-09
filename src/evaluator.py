@@ -27,7 +27,7 @@ class Metric:
 
     def __init__(self, task_name):
         # assert task_name in TASK_ATTRS
-        self.metric = evaluate.load(*TASK_ATTRS[task_name]["metric_keys"])
+        self.metric = evaluate.load('accuracy')
         self.preprocess = preprocess_for_classification
 
     def add_batch(self, logits: torch.Tensor, labels: torch.Tensor):
