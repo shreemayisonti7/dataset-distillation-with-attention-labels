@@ -6,6 +6,7 @@ from typing import Any, Optional
 
 from datasets import Dataset, disable_progress_bar, load_dataset, load_from_disk
 from datasets.dataset_dict import DatasetDict
+import torch
 from torch.utils.data import DataLoader
 from transformers import DataCollatorWithPadding, PreTrainedTokenizerFast
 
