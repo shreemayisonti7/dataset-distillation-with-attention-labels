@@ -129,8 +129,8 @@ class DataModule:
 
     def get_dataset(self):
         """load raw datasets from source"""
-        datasets = load_dataset("json", data_files={"train": f"./../data/sd/train.jsonl",
-            "validation": f"./../data/sd/validation.jsonl"})
+        datasets = load_dataset("json", data_files={"train": f"./dataset-distillation-with-attention-labels/data/sd/train.jsonl",
+            "validation": f"./dataset-distillation-with-attention-labels/data/sd/validation.jsonl"})
         print("loaded Social Dilemma")
         os.makedirs(os.path.dirname(self.config.datasets_path), exist_ok=True)
         datasets.save_to_disk(self.config.datasets_path)
