@@ -75,11 +75,11 @@ TASK_ATTRS = {
         "metric_keys": ("glue", "rte"),
     },
     "sd": {
-        "load_args": None,
+        "load_args": ('sd'),
         "sentence_keys": ("text", ),
         "problem_type": "single_label_classification",
         "test_split_key": "validation",
-        "metric_keys": ('super_glue', 'wic'),
+        "metric_keys": ("accuracy",),
     },
 
 }

@@ -26,7 +26,7 @@ class Metric:
     """
 
     def __init__(self, task_name):
-        assert task_name in TASK_ATTRS
+        # assert task_name in TASK_ATTRS
         self.metric = evaluate.load(*TASK_ATTRS[task_name]["metric_keys"])
         self.preprocess = preprocess_for_classification
 
