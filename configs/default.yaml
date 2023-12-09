@@ -62,7 +62,7 @@ train:
 
 evaluate:
   task_name: ${data.task_name}
-  n_eval_model: 100
+  n_eval_model: 20
   fp16: False
   bf16: False
 
