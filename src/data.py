@@ -176,11 +176,11 @@ class DataModule:
         def label_setter(examples):
             # print(len(examples))
             if examples['label'] == 'Negative':
-                return {'labels': torch.Tensor([0])}
+                return {'labels': torch.Tensor([1, 0, 0])}
             elif examples['label'] == 'Positive':
-                return {'labels': torch.Tensor([1])}
+                return {'labels': torch.Tensor([0, 1, 0])}
             else:
-                return {'labels': torch.Tensor([2])}
+                return {'labels': torch.Tensor([0, 0, 1])}
 
         # tokenize
         dataset = dataset.map(
