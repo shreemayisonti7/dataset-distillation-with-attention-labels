@@ -129,23 +129,12 @@ class DataModule:
 
     def get_dataset(self):
         """load raw datasets from source"""
-        if os.path.exists(self.config.datasets_path):
-            datasets = load_dataset("json", data_files={"train": f"./../data/sd/train.jsonl",
-                "validation": f"./../data/sd/validation.jsonl"})
-            # datasets = load_from_disk(self.config.datasets_path)
-            print("loaded Social Dilemma")
-        # else:
-        #     assert self.config.task_name in TASK_ATTRS
-        #     datasets = load_dataset(*self.dataset_attr["load_args"])
-        #
-        #     if "validation" not in datasets:
-        #         datasets["validation"] = datasets.pop(
-        #             self.dataset_attr["test_split_key"]
-        #         )
-            os.makedirs(os.path.dirname(self.config.datasets_path), exist_ok=True)
-            datasets.save_to_disk(self.config.datasets_path)
-
-            return datasets
+        datasets = load_dataset("json", data_files={"train": f"./../data/sd/train.jsonl",
+            "validation": f"./../data/sd/validation.jsonl"})
+        print("loaded Social Dilemma")
+        os.makedirs(os.path.dirname(self.config.datasets_path), exist_ok=True)
+        datasets.save_to_disk(self.config.datasets_path)
+        return datasets
 
     def run_preprocess(self, tokenizer: PreTrainedTokenizerFast):
         """datasets preprocessing"""
@@ -155,20 +144,6 @@ class DataModule:
             self.data_collator = DataCollatorWithPadding(
                 tokenizer=tokenizer, padding="longest", pad_to_multiple_of=8
             )
-
-        # if (
-        #     os.path.exists(self.config.preprocessed_datasets_path)
-        #     and not self.config.force_preprocess
-        # ):
-        #     logger.info(
-        #         "Load preprocessed datasets from `{}`".format(
-        #             self.config.preprocessed_datasets_path
-        #         )
-        #     )
-        #     self.preprocessed_datasets = load_from_disk(
-        #         self.config.preprocessed_datasets_path
-        #     )
-        #     return
 
         self.preprocessed_datasets = self.preprocess_dataset(
             tokenizer=tokenizer, dataset=self.datasets
