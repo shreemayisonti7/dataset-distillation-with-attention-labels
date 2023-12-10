@@ -43,7 +43,7 @@ learner_train:
 train:
   skip_train: False
   inner_loop: ${learner_train.train_step}
-  epoch: 30
+  epoch: 1
   lr_inputs_embeds: 1.0e-2
   lr_attention_labels: ${train.lr_inputs_embeds}
   lr_labels: ${train.lr_inputs_embeds}

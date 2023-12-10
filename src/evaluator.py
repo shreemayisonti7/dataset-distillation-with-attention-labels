@@ -43,9 +43,9 @@ class Metric:
 def preprocess_for_classification(
     logits: torch.Tensor, labels: torch.Tensor
 ) -> dict[str, list[int]]:
-    assert logits.ndim == 2
-    assert labels.ndim == 1
-    return {"predictions": logits.argmax(-1).tolist(), "references": labels.tolist()}
+    # assert logits.ndim == 2
+    # assert labels.ndim == 1
+    return {"predictions": logits.argmax(-1).tolist(), "references": labels.argmax(-1).tolist()}
 
 
 @dataclass
